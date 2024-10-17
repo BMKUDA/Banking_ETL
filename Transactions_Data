@@ -1,0 +1,43 @@
+import csv
+import random
+import uuid
+from faker import Faker
+
+# Initialize Faker
+faker = Faker()
+
+def generate_transaction_data(num_transactions):
+    data = []
+    for _ in range(num_transactions):
+        customer_id = str(uuid.uuid4())
+        account_id = str(uuid.uuid4())
+        transaction_id = str(uuid.uuid4())
+        transaction_description = faker.sentence(nb_words=6)
+        transaction_amount = round(random.uniform(-1000, 1000), 2)
+        account_balance = round(random.uniform(1000, 5000), 2)
+        
+        transaction = {
+            "Customer_id": customer_id,
+            "Account_id": account_id,
+            "Transaction_id": transaction_id,
+            "Transaction_description": transaction_description,
+            "Transaction_amount": transaction_amount,
+            "Account_balance": account_balance
+        }
+        data.append(transaction)
+    return data
+
+def export_to_csv(transactions, filename, delimiter):
+    keys = transactions[0].keys()
+    with open(filename, 'w', newline='') as output_file:
+        dict_writer = csv.DictWriter(output_file, fieldnames=keys, delimiter=delimiter)
+        dict_writer.writeheader()
+        dict_writer.writerows(transactions)
+
+# Generate 10 transactions as an example
+transactions = generate_transaction_data(10)
+
+# Export the transactions to a CSV file with the chosen delimiter
+export_to_csv(transactions, 'transactions.csv', delimiter='|')
+
+print("Data exported to transactions.csv with '|' as the delimiter.")
